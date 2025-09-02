@@ -1,0 +1,836 @@
+import React, { useState } from 'react';
+import { ChevronRight, ChevronLeft, Award, TrendingUp, Target, Users, Search, DollarSign, BarChart3, CheckCircle2, Mail, User, Building, Phone } from 'lucide-react';
+
+const DigitalSkillsQuiz = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [userInfo, setUserInfo] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    company: '',
+    role: '',
+    challenge: ''
+  });
+  const [showResults, setShowResults] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const sections = [
+    {
+      id: 'intro',
+      title: 'Welcome',
+      icon: <Award className="w-6 h-6" />,
+      type: 'intro'
+    },
+    {
+      id: 'strategy',
+      title: 'Strategy & Buyer\'s Journey',
+      icon: <Target className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q1',
+          text: 'What are the benefits of including both traditional and digital marketing activities when creating a marketing campaign?',
+          type: 'multiple',
+          options: [
+            'Optimizes for scale and relevance',
+            'Uses every audience\'s point of contact',
+            'Prioritizes inbound marketing over outbound',
+            'Both traditional and digital channel creative can be quickly updated'
+          ],
+          correct: [0, 1]
+        },
+        {
+          id: 'q2',
+          text: 'What are the main benefits of a 360 marketing campaign?',
+          type: 'multiple',
+          options: [
+            'Optimizes for scale and balance',
+            'Covers the entire buying cycle',
+            'Encourages the consumer to proactively visit your website',
+            'Only covers traditional marketing'
+          ],
+          correct: [0, 1, 2]
+        },
+        {
+          id: 'q3',
+          text: 'Your prospect is aware they have a problem and have identified potential solutions for it. They are now at the stage in the Buyer\'s Journey where they are evaluating their options.',
+          type: 'single',
+          options: ['Consideration', 'Interest', 'Conversion', 'Awareness'],
+          correct: 0
+        },
+        {
+          id: 'q4',
+          text: 'To fend off customer attrition from competitors, you send out an exclusive discount offer to anyone who has purchased from you in the last six months. To what stages of the Buyer\'s Journey does this align?',
+          type: 'single',
+          options: ['Retention', 'Conversion', 'Interest', 'Awareness'],
+          correct: 0
+        }
+      ]
+    },
+    {
+      id: 'content',
+      title: 'Content & Branding',
+      icon: <Users className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q5',
+          text: 'What are the qualities of effective content?',
+          type: 'multiple',
+          options: [
+            'Personalized',
+            'Relevant',
+            'Controversial',
+            'Irrelevant'
+          ],
+          correct: [0, 1]
+        },
+        {
+          id: 'q6',
+          text: 'You have defined your personality and brand and identified your audience. What is the next step involved in creating your brand business story?',
+          type: 'single',
+          options: [
+            'Map story to personas',
+            'Identify customer pain points',
+            'Do a review of social platforms',
+            'Review content formats and types'
+          ],
+          correct: 0
+        },
+        {
+          id: 'q7',
+          text: 'What powerful content tool is demonstrated in the image shown?',
+          type: 'single',
+          options: [
+            'Content Personalization',
+            'Content Repurposing',
+            'Social Listening',
+            'Influencer Marketing'
+          ],
+          correct: 1
+        }
+      ]
+    },
+    {
+      id: 'social',
+      title: 'Social Media',
+      icon: <TrendingUp className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q8',
+          text: 'Suppose a manager has asked you to calculate the return on investment (ROI) for a content marketing campaign you are managing. You have already determined two benchmark metrics for your campaign - new site visitors and workable leads. Next, you subtracted these figures from your campaign metrics. What is the next step to enable you to calculate the ROI?',
+          type: 'multiple',
+          options: [
+            'Divide campaign spend by the difference between the benchmark and campaign metrics',
+            'Add campaign spend to the difference between the benchmark and campaign metrics',
+            'Subtract campaign spend from the difference between the benchmark and campaign metrics',
+            'Multiply campaign spend by the difference between the benchmark and campaign metrics'
+          ],
+          correct: [0]
+        },
+        {
+          id: 'q9',
+          text: 'What are some of the best practices that you should follow when setting up a social media account for a business?',
+          type: 'multiple',
+          options: [
+            'Include CTAs in your cover photo',
+            'Use a profile image that depicts your brand',
+            'Adopt a formal tone in your bio',
+            'Blend your cover photo with your profile photo'
+          ],
+          correct: [0, 1]
+        },
+        {
+          id: 'q10',
+          text: 'What are some of the best practices that should be followed when posting content on LinkedIn?',
+          type: 'multiple',
+          options: [
+            'Ask co-workers to share company posts',
+            'Adopt a professional tone',
+            'Post at midday when professionals are on lunch',
+            'Avoid including YouTube links'
+          ],
+          correct: [0, 1, 2]
+        },
+        {
+          id: 'q11',
+          text: 'You have been asked to train a new digital marketing intern on the best practices to follow when using hashtags. Using the image shown as an example, identify which key hashtag rules have been broken.',
+          type: 'multiple',
+          options: [
+            'Avoid using lots of hashtags',
+            'Capitalize hashtags appropriately',
+            'Do not include emojis beside hashtags',
+            'Choose images relevant to hashtags'
+          ],
+          correct: [0, 1, 3]
+        },
+        {
+          id: 'q12',
+          text: 'How can you optimize ad serving on Facebook and Instagram?',
+          type: 'multiple',
+          options: [
+            'Use Link Clicks to serve ads to people who are most likely to click on them',
+            'Use Daily Unique Reach to show your ad once per day to your audience',
+            'Target three audience combinations in each ad set',
+            'Use multiple CTAs in your ads'
+          ],
+          correct: [0, 1]
+        }
+      ]
+    },
+    {
+      id: 'seo',
+      title: 'SEO',
+      icon: <Search className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q13',
+          text: 'You run an online fitness and nutrition blog whose primary SEO objective is brand awareness. Traffic coming to the blog is low so you want to leverage SEO to help drive awareness among new visitors. Which SMART objective is most relevant based on the SEO objective for the blog?',
+          type: 'single',
+          options: [
+            'Get links to your website from three of the top five industry news websites in the next six months',
+            'Double the page views for our highest ad revenue pages in 24 months',
+            'Generate 30% more online sales for our top 10 converting landing pages in the next 10 months',
+            'Grow returning visitors from SEO from 3% to 5% within 12 months'
+          ],
+          correct: 0
+        },
+        {
+          id: 'q14',
+          text: 'You are carrying out SEO keyword research for your product or service. You have picked a topic to research, brainstormed and now have a significant number of keywords around the topic. Following best practice, what are the next steps towards successful keyword research?',
+          type: 'multiple',
+          options: [
+            'Review keyword value',
+            'Prioritize keywords',
+            'Explore other relevant topics',
+            'Think of closely related keywords'
+          ],
+          correct: [0, 1]
+        },
+        {
+          id: 'q15',
+          text: 'Which website characteristics are also considered technical SEO ranking factors?',
+          type: 'multiple',
+          options: [
+            'HTTPs',
+            'Site speed',
+            'Referral traffic',
+            'URLs'
+          ],
+          correct: [0, 1, 3]
+        },
+        {
+          id: 'q16',
+          text: 'You have measured your website\'s SEO performance and have found that your technical SEO efforts have not paid off as expected. What questions should you consider to help improve performance?',
+          type: 'multiple',
+          options: [
+            'Are there any URL errors reported?',
+            'Have your key landing pages been indexed?',
+            'Have you avoided keyword stuffing?',
+            'Does your site lack domain authority?'
+          ],
+          correct: [0, 1]
+        }
+      ]
+    },
+    {
+      id: 'ppc',
+      title: 'PPC & Display',
+      icon: <DollarSign className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q17',
+          text: 'In this example of a Google Ads campaign for a Parental Control App that offers Screen Time and Blocking features, what level are "iPhone", "Android" and "App" in the campaign structure?',
+          type: 'single',
+          options: [
+            'Ad Group Level',
+            'Campaign Level',
+            'Bid Level',
+            'Keyword Level'
+          ],
+          correct: 0
+        },
+        {
+          id: 'q18',
+          text: 'When an ad enters a Google Ads bid auction, what factors help determine the order in which it is served?',
+          type: 'multiple',
+          options: [
+            'Estimated CTR',
+            'Max CPC bid of competitors',
+            'Impression Share',
+            'Impression Share'
+          ],
+          correct: [0, 2]
+        },
+        {
+          id: 'q19',
+          text: 'What are the key benefits of using display and video advertising in your marketing strategy?',
+          type: 'multiple',
+          options: [
+            'Brand awareness',
+            'Re-engage with customers',
+            'Accountability and transparency',
+            'Relevance to user needs'
+          ],
+          correct: [0, 1, 2]
+        }
+      ]
+    },
+    {
+      id: 'analytics',
+      title: 'Analytics & Web',
+      icon: <BarChart3 className="w-6 h-6" />,
+      questions: [
+        {
+          id: 'q20',
+          text: 'Which report in Google Analytics highlights parts of the conversion process that can be improved to enhance the user journey and increase conversion rates?',
+          type: 'single',
+          options: [
+            'Funnel Visualization',
+            'Attribution Modeling',
+            'E-commerce',
+            'Behavior Flow'
+          ],
+          correct: 0
+        }
+      ]
+    },
+    {
+      id: 'capture',
+      title: 'Get Your Results',
+      icon: <Mail className="w-6 h-6" />,
+      type: 'capture'
+    }
+  ];
+
+  const handleAnswer = (questionId, value) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: value
+    }));
+  };
+
+  const handleMultipleChoice = (questionId, optionIndex) => {
+    const current = answers[questionId] || [];
+    const updated = current.includes(optionIndex)
+      ? current.filter(i => i !== optionIndex)
+      : [...current, optionIndex];
+    handleAnswer(questionId, updated);
+  };
+
+  const handleNext = () => {
+    if (currentStep < sections.length - 1) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!userInfo.email) newErrors.email = 'Email is required';
+    if (!userInfo.firstName) newErrors.firstName = 'First name is required';
+    if (!userInfo.lastName) newErrors.lastName = 'Last name is required';
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (userInfo.email && !emailRegex.test(userInfo.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setShowResults(true);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const calculateScore = () => {
+    let totalCorrect = 0;
+    let totalQuestions = 0;
+    let sectionScores = {};
+
+    sections.forEach(section => {
+      if (section.questions) {
+        let sectionCorrect = 0;
+        section.questions.forEach(q => {
+          totalQuestions++;
+          const userAnswer = answers[q.id];
+          
+          if (q.type === 'single') {
+            if (userAnswer === q.correct) {
+              totalCorrect++;
+              sectionCorrect++;
+            }
+          } else if (q.type === 'multiple' && userAnswer) {
+            const correctSet = new Set(q.correct);
+            const userSet = new Set(userAnswer);
+            if (correctSet.size === userSet.size && 
+                [...correctSet].every(val => userSet.has(val))) {
+              totalCorrect++;
+              sectionCorrect++;
+            }
+          }
+        });
+        sectionScores[section.id] = {
+          correct: sectionCorrect,
+          total: section.questions.length,
+          percentage: Math.round((sectionCorrect / section.questions.length) * 100)
+        };
+      }
+    });
+
+    const overallPercentage = Math.round((totalCorrect / totalQuestions) * 100);
+    
+    return {
+      overall: overallPercentage,
+      sections: sectionScores,
+      level: overallPercentage >= 70 ? 'Advanced' : overallPercentage >= 40 ? 'Intermediate' : 'Beginner'
+    };
+  };
+
+  const currentSection = sections[currentStep];
+  const questionSections = sections.filter(s => s.questions);
+  const progress = currentStep === 0 ? 0 : ((currentStep - 1) / (sections.length - 2)) * 100;
+  const scores = showResults ? calculateScore() : null;
+
+  if (showResults) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="text-center mb-8">
+              <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Assessment Complete!</h1>
+              <p className="text-gray-600">Here's your digital marketing skills scorecard</p>
+            </div>
+
+            <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl p-6 text-white mb-8">
+              <div className="text-center">
+                <div className="text-5xl font-bold mb-2">{scores.overall}%</div>
+                <div className="text-xl">Overall Score</div>
+                <div className="mt-4 inline-block bg-white/20 rounded-full px-4 py-2">
+                  <span className="font-semibold">Level: {scores.level}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Section Breakdown</h2>
+              <div className="space-y-3">
+                {Object.entries(scores.sections).map(([sectionId, score]) => {
+                  const section = sections.find(s => s.id === sectionId);
+                  return (
+                    <div key={sectionId} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-gray-700">{section.title}</span>
+                        <span className="text-sm font-semibold text-orange-600">
+                          {score.percentage}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-orange-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${score.percentage}%` }}
+                        />
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        {score.correct} of {score.total} correct
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-orange-50 rounded-lg p-6">
+              <h3 className="font-semibold text-gray-800 mb-3">📧 Full Report Sent!</h3>
+              <p className="text-gray-600 mb-4">
+                We've sent a detailed report to <strong>{userInfo.email}</strong> with:
+              </p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-start">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Personalized learning recommendations</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Free resources for your skill gaps</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Course recommendations based on your level</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Free consultation booking link</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 text-center">
+              <button 
+                onClick={() => window.location.reload()}
+                className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-amber-700 transition-all"
+              >
+                Take Quiz Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-100 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Progress Bar - Only show when NOT on intro page */}
+        {currentStep > 0 && (
+          <div className="bg-white rounded-full h-3 mb-8 overflow-hidden shadow-sm">
+            <div 
+              className="bg-gradient-to-r from-orange-500 to-amber-600 h-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+
+        {/* Step Indicators - Only show when NOT on intro page, with even spacing */}
+        {currentStep > 0 && (
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-12">
+              {questionSections.map((section, index) => {
+                const sectionIndex = sections.findIndex(s => s.id === section.id);
+                return (
+                  <div 
+                    key={section.id}
+                    className={`flex flex-col items-center cursor-pointer transition-all ${
+                      sectionIndex === currentStep ? 'scale-110' : ''
+                    }`}
+                    onClick={() => sectionIndex <= currentStep && setCurrentStep(sectionIndex)}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all ${
+                      sectionIndex < currentStep 
+                        ? 'bg-green-500 text-white' 
+                        : sectionIndex === currentStep 
+                          ? 'bg-orange-600 text-white ring-4 ring-orange-200' 
+                          : 'bg-gray-300 text-gray-500'
+                    }`}>
+                      {sectionIndex < currentStep ? <CheckCircle2 className="w-5 h-5" /> : section.icon}
+                    </div>
+                    <span className={`text-xs text-center font-medium ${
+                      sectionIndex === currentStep ? 'text-orange-600' : 'text-gray-500'
+                    }`}>
+                      {section.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Main Content */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {currentSection.type === 'intro' ? (
+            <div className="text-center py-12">
+              <Award className="w-20 h-20 text-orange-600 mx-auto mb-6" />
+              <h1 className="text-4xl font-bold text-gray-800 mb-4">
+                How good are your Digital Marketing skills?
+              </h1>
+              <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
+                London School of Digital Marketing has designed this adaptive Digital Skills Test to assess how you can use your skills across several digital marketing channels to solve particular business challenges.
+              </p>
+              
+              <h2 className="text-2xl font-semibold text-gray-800 mb-8">
+                Assess your skills across several digital marketing channels
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 max-w-5xl mx-auto">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                    <Award className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-800 mb-2">Receive bespoke report</h3>
+                  <p className="text-gray-600 text-sm">Outlining your digital Marketing skills</p>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                    <TrendingUp className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-800 mb-2">Discover your learning roadmap</h3>
+                  <p className="text-gray-600 text-sm">Personalized growth plan</p>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                    <BarChart3 className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-800 mb-2">Receive course suggestion</h3>
+                  <p className="text-gray-600 text-sm">Tailored recommendations</p>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                    <Users className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-800 mb-2">Receive bespoke report</h3>
+                  <p className="text-gray-600 text-sm">Outlining your digital Marketing skills</p>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={handleNext}
+                  className="bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-700 transition-all"
+                >
+                  Test your digital skills
+                </button>
+                <button 
+                  className="border-2 border-orange-600 text-orange-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-50 transition-all"
+                >
+                  View Courses
+                </button>
+              </div>
+            </div>
+          ) : currentSection.type === 'capture' ? (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+                Get Your Personalized Results
+              </h2>
+              <p className="text-gray-600 text-center mb-8">
+                Enter your details to receive your comprehensive skills report and personalized learning recommendations
+              </p>
+              
+              <div className="max-w-md mx-auto space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={userInfo.firstName}
+                      onChange={(e) => setUserInfo({...userInfo, firstName: e.target.value})}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                        errors.firstName ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="John"
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={userInfo.lastName}
+                      onChange={(e) => setUserInfo({...userInfo, lastName: e.target.value})}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                        errors.lastName ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Doe"
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={userInfo.email}
+                    onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="john@example.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone (Optional)
+                  </label>
+                  <input
+                    type="tel"
+                    value={userInfo.phone}
+                    onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Company (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={userInfo.company}
+                    onChange={(e) => setUserInfo({...userInfo, company: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    placeholder="Your Company"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Current Role (Optional)
+                  </label>
+                  <select
+                    value={userInfo.role}
+                    onChange={(e) => setUserInfo({...userInfo, role: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  >
+                    <option value="">Select your role</option>
+                    <option value="marketing_manager">Marketing Manager</option>
+                    <option value="business_owner">Business Owner</option>
+                    <option value="marketing_coordinator">Marketing Coordinator</option>
+                    <option value="student">Student</option>
+                    <option value="freelancer">Freelancer</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Biggest Marketing Challenge (Optional)
+                  </label>
+                  <textarea
+                    value={userInfo.challenge}
+                    onChange={(e) => setUserInfo({...userInfo, challenge: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    rows="3"
+                    placeholder="What's your biggest digital marketing challenge right now?"
+                  />
+                </div>
+
+                <div className="bg-orange-50 rounded-lg p-4 mt-6">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-semibold">🔒 Your information is secure</span><br />
+                    We'll send your personalized report and recommendations to your email. 
+                    No spam, just valuable insights!
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                {currentSection.title}
+              </h2>
+              
+              <div className="space-y-6">
+                {currentSection.questions?.map((question, qIndex) => (
+                  <div key={question.id} className="bg-gray-50 rounded-lg p-6">
+                    <div className="mb-4">
+                      <span className="text-sm text-orange-600 font-semibold">
+                        Question {qIndex + 1} of {currentSection.questions.length}
+                      </span>
+                      <p className="text-gray-800 mt-2 font-medium">{question.text}</p>
+                    </div>
+                    
+                    {question.type === 'single' ? (
+                      <div className="space-y-3">
+                        {question.options.map((option, index) => (
+                          <label 
+                            key={index}
+                            className="flex items-center p-3 bg-white rounded-lg border-2 cursor-pointer hover:border-orange-300 transition-all"
+                          >
+                            <input
+                              type="radio"
+                              name={question.id}
+                              checked={answers[question.id] === index}
+                              onChange={() => handleAnswer(question.id, index)}
+                              className="w-4 h-4 text-orange-600 focus:ring-orange-500"
+                            />
+                            <span className="ml-3 text-gray-700">{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-sm text-gray-500 italic">Select all that apply</p>
+                        {question.options.map((option, index) => (
+                          <label 
+                            key={index}
+                            className="flex items-center p-3 bg-white rounded-lg border-2 cursor-pointer hover:border-orange-300 transition-all"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(answers[question.id] || []).includes(index)}
+                              onChange={() => handleMultipleChoice(question.id, index)}
+                              className="w-4 h-4 text-orange-600 focus:ring-orange-500 rounded"
+                            />
+                            <span className="ml-3 text-gray-700">{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Navigation - Only show when NOT on intro page */}
+          {currentSection.type !== 'intro' && (
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={handlePrev}
+                className="flex items-center px-6 py-2 rounded-lg font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </button>
+              
+              {currentSection.type === 'capture' ? (
+                <button
+                  onClick={handleSubmit}
+                  className="flex items-center px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all"
+                >
+                  Get My Results
+                  <CheckCircle2 className="w-4 h-4 ml-2" />
+                </button>
+              ) : (
+                <button
+                  onClick={handleNext}
+                  className="flex items-center px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-700 transition-all"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Trust Signals */}
+        <div className="mt-8 text-center text-gray-500 text-sm">
+          <p>Join 500+ professionals who have improved their digital marketing skills</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DigitalSkillsQuiz;
